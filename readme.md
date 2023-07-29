@@ -1,4 +1,8 @@
 [带动图部署文档](https://czl-logistics.feishu.cn/docx/OBLXdCYuIodZ86xbJ4zcT9TVnxg)
+
+Telegram交流群：https://t.me/ai_cn2023
+
+
 ## 一、CZLOapi-获取key
 网址：https://oapi.czl.net
 #### 1. 注册与登录
