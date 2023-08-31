@@ -1,6 +1,9 @@
-[带动图部署文档](https://czl-logistics.feishu.cn/docx/OBLXdCYuIodZ86xbJ4zcT9TVnxg)
+[带动图部署文档](https://docs.czl.net/czloapi/practice/feishu_bot.html)
 
 Telegram交流群：https://t.me/ai_cn2023
+
+--- 
+
 
 
 ## 一、CZLOapi-获取key
