@@ -3,10 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
-	"start-feishubot/initialization"
-	"start-feishubot/services/openai"
 	"start-feishubot/utils"
+
+	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )
 
 type MsgInfo struct {
@@ -86,24 +85,6 @@ func (*ClearAction) Execute(a *ActionInfo) bool {
 	return true
 }
 
-type RolePlayAction struct { /*角色扮演*/
-}
-
-func (*RolePlayAction) Execute(a *ActionInfo) bool {
-	if system, foundSystem := utils.EitherCutPrefix(a.info.qParsed,
-		"/system ", "角色扮演 "); foundSystem {
-		a.handler.sessionCache.Clear(*a.info.sessionId)
-		systemMsg := append([]openai.Messages{}, openai.Messages{
-			Role: "system", Content: system,
-		})
-		a.handler.sessionCache.SetMsg(*a.info.sessionId, systemMsg)
-		sendSystemInstructionCard(*a.ctx, a.info.sessionId,
-			a.info.msgId, system)
-		return false
-	}
-	return true
-}
-
 type HelpAction struct { /*帮助*/
 }
 
@@ -128,26 +109,6 @@ func (*BalanceAction) Execute(a *ActionInfo) bool {
 			return false
 		}
 		sendBalanceCard(*a.ctx, a.info.sessionId, *balanceResp)
-		return false
-	}
-	return true
-}
-
-type RoleListAction struct { /*角色列表*/
-}
-
-func (*RoleListAction) Execute(a *ActionInfo) bool {
-	if _, foundSystem := utils.EitherTrimEqual(a.info.qParsed,
-		"/roles", "角色列表"); foundSystem {
-		//a.handler.sessionCache.Clear(*a.info.sessionId)
-		//systemMsg := append([]openai.Messages{}, openai.Messages{
-		//	Role: "system", Content: system,
-		//})
-		//a.handler.sessionCache.SetMsg(*a.info.sessionId, systemMsg)
-		//sendSystemInstructionCard(*a.ctx, a.info.sessionId,
-		//	a.info.msgId, system)
-		tags := initialization.GetAllUniqueTags()
-		SendRoleTagsCard(*a.ctx, a.info.sessionId, a.info.msgId, *tags)
 		return false
 	}
 	return true

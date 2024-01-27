@@ -95,9 +95,7 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		&ProcessMentionAction{},  //判断机器人是否应该被调用
 		&EmptyAction{},           //空消息处理
 		&ClearAction{},           //清除消息处理
-		&RoleListAction{},        //角色列表处理
 		&HelpAction{},            //帮助处理
-		&RolePlayAction{},        //角色扮演处理
 		&MessageAction{
 			chatgpt: chatgpt.NewGpt3(&m.config),
 		}, //消息处理
