@@ -5,29 +5,8 @@ import (
 )
 
 const (
-	Fresh      AIMode = 0.1
-	Warmth     AIMode = 0.4
-	Balance    AIMode = 0.7
-	Creativity AIMode = 1.0
-)
-
-var AIModeMap = map[string]AIMode{
-	"清新": Fresh,
-	"温暖": Warmth,
-	"平衡": Balance,
-	"创意": Creativity,
-}
-
-var AIModeStrs = []string{
-	"清新",
-	"温暖",
-	"平衡",
-	"创意",
-}
-
-const (
-	maxTokens = 4096
-	engine    = "gpt-4-0613"
+	maxTokens   = 2000
+	temperature = 0.7
 )
 
 type Messages struct {
