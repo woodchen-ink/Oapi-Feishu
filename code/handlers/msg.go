@@ -19,11 +19,13 @@ type CardKind string
 type CardChatType string
 
 var (
-	ClearCardKind     = CardKind("clear")           // 清空上下文
-	PicModeChangeKind = CardKind("pic_mode_change") // 切换图片创作模式
-	PicResolutionKind = CardKind("pic_resolution")  // 图片分辨率调整
-	PicTextMoreKind   = CardKind("pic_text_more")   // 重新根据文本生成图片
-	PicVarMoreKind    = CardKind("pic_var_more")    // 变量图片
+	ClearCardKind      = CardKind("clear")            // 清空上下文
+	PicModeChangeKind  = CardKind("pic_mode_change")  // 切换图片创作模式
+	PicResolutionKind  = CardKind("pic_resolution")   // 图片分辨率调整
+	PicTextMoreKind    = CardKind("pic_text_more")    // 重新根据文本生成图片
+	PicVarMoreKind     = CardKind("pic_var_more")     // 变量图片
+	RoleTagsChooseKind = CardKind("role_tags_choose") // 内置角色所属标签选择
+	RoleChooseKind     = CardKind("role_choose")      // 内置角色选择
 )
 
 var (
@@ -399,6 +401,59 @@ func withPicResolutionBtn(sessionID *string) larkcard.
 		Build()
 	return actions
 }
+func withRoleTagsBtn(sessionID *string, tags ...string) larkcard.
+	MessageCardElement {
+	var menuOptions []MenuOption
+
+	for _, tag := range tags {
+		menuOptions = append(menuOptions, MenuOption{
+			label: tag,
+			value: tag,
+		})
+	}
+	cancelMenu := newMenu("选择角色分类",
+		map[string]interface{}{
+			"value":     "0",
+			"kind":      RoleTagsChooseKind,
+			"sessionId": *sessionID,
+			"msgId":     *sessionID,
+		},
+		menuOptions...,
+	)
+
+	actions := larkcard.NewMessageCardAction().
+		Actions([]larkcard.MessageCardActionElement{cancelMenu}).
+		Layout(larkcard.MessageCardActionLayoutFlow.Ptr()).
+		Build()
+	return actions
+}
+
+func withRoleBtn(sessionID *string, titles ...string) larkcard.
+	MessageCardElement {
+	var menuOptions []MenuOption
+
+	for _, tag := range titles {
+		menuOptions = append(menuOptions, MenuOption{
+			label: tag,
+			value: tag,
+		})
+	}
+	cancelMenu := newMenu("查看内置角色",
+		map[string]interface{}{
+			"value":     "0",
+			"kind":      RoleChooseKind,
+			"sessionId": *sessionID,
+			"msgId":     *sessionID,
+		},
+		menuOptions...,
+	)
+
+	actions := larkcard.NewMessageCardAction().
+		Actions([]larkcard.MessageCardActionElement{cancelMenu}).
+		Layout(larkcard.MessageCardActionLayoutFlow.Ptr()).
+		Build()
+	return actions
+}
 
 func replyMsg(ctx context.Context, msg string, msgId *string) error {
 	msg, i := processMessage(msg)
@@ -590,6 +645,15 @@ func sendClearCacheCheckCard(ctx context.Context,
 	replyCard(ctx, msgId, newCard)
 }
 
+func sendSystemInstructionCard(ctx context.Context,
+	sessionId *string, msgId *string, content string) {
+	newCard, _ := newSendCard(
+		withHeader("🥷  已进入角色扮演模式", larkcard.TemplateIndigo),
+		withMainText(content),
+		withNote("请注意，这将开始一个全新的对话，您将无法利用之前话题的历史信息"))
+	replyCard(ctx, msgId, newCard)
+}
+
 func sendOnProcessCard(ctx context.Context,
 	sessionId *string, msgId *string) (*string, error) {
 	newCard, _ := newSendCardWithOutHeader(
@@ -630,7 +694,7 @@ func sendHelpCard(ctx context.Context,
 	sessionId *string, msgId *string) {
 	newCard, _ := newSendCard(
 		withHeader("🎒需要帮助吗？", larkcard.TemplateBlue),
-		withMainMd("**我是具备打字机效果的Oapi飞书聊天机器人**"),
+		withMainMd("**我是具备打字机效果的聊天机器人！**"),
 		withSplitLine(),
 		withMdAndExtraBtn(
 			"** 🆑 清除话题上下文**\n文本回复 *清除* 或 */clear*",
@@ -640,6 +704,8 @@ func sendHelpCard(ctx context.Context,
 				"chatType":  UserChatType,
 				"sessionId": *sessionId,
 			}, larkcard.MessageCardButtonTypeDanger)),
+		withMainMd("🛖 **内置角色列表** \n"+" 文本回复 *角色列表* 或 */roles*"),
+		withMainMd("🥷 **角色扮演模式**\n文本回复*角色扮演* 或 */system*+空格+角色信息"),
 		withSplitLine(),
 		withMainMd("🎒 **需要更多帮助**\n文本回复 *帮助* 或 */help*"),
 	)
@@ -676,5 +742,23 @@ func sendBalanceCard(ctx context.Context, msgId *string,
 			balance.EffectiveAt.Format("2006-01-02 15:04:05"),
 			balance.ExpiresAt.Format("2006-01-02 15:04:05"))),
 	)
+	replyCard(ctx, msgId, newCard)
+}
+
+func SendRoleTagsCard(ctx context.Context,
+	sessionId *string, msgId *string, roleTags []string) {
+	newCard, _ := newSendCard(
+		withHeader("🛖 请选择角色类别", larkcard.TemplateIndigo),
+		withRoleTagsBtn(sessionId, roleTags...),
+		withNote("提醒：选择角色所属分类，以便我们为您推荐更多相关角色。"))
+	replyCard(ctx, msgId, newCard)
+}
+
+func SendRoleListCard(ctx context.Context,
+	sessionId *string, msgId *string, roleTag string, roleList []string) {
+	newCard, _ := newSendCard(
+		withHeader("🛖 角色列表"+" - "+roleTag, larkcard.TemplateIndigo),
+		withRoleBtn(sessionId, roleList...),
+		withNote("提醒：选择内置场景，快速进入角色扮演模式。"))
 	replyCard(ctx, msgId, newCard)
 }

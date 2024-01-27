@@ -2,12 +2,11 @@ package initialization
 
 import (
 	"fmt"
+	"github.com/spf13/pflag"
 	"os"
 	"strconv"
 	"strings"
 	"sync"
-
-	"github.com/spf13/pflag"
 
 	"github.com/spf13/viper"
 )
@@ -86,7 +85,7 @@ func LoadConfig(cfg string) *Config {
 		UseHttps:                           getViperBoolValue("USE_HTTPS", false),
 		CertFile:                           getViperStringValue("CERT_FILE", "cert.pem"),
 		KeyFile:                            getViperStringValue("KEY_FILE", "key.pem"),
-		OpenaiApiUrl:                       getViperStringValue("API_URL", "https://oapi.czl.net"),
+		OpenaiApiUrl:                       getViperStringValue("API_URL", "https://api.openai.com"),
 		HttpProxy:                          getViperStringValue("HTTP_PROXY", ""),
 		AzureOn:                            getViperBoolValue("AZURE_ON", false),
 		AzureApiVersion:                    getViperStringValue("AZURE_API_VERSION", "2023-03-15-preview"),
