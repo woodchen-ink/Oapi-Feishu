@@ -3,13 +3,14 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"strings"
-
 	"start-feishubot/initialization"
 	"start-feishubot/services"
+	"start-feishubot/services/chatgpt"
 	"start-feishubot/services/openai"
+	"strings"
 
 	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
+
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )
 
@@ -40,11 +41,12 @@ func judgeMsgType(event *larkim.P2MessageReceiveV1) (string, error) {
 	msgType := event.Event.Message.MessageType
 
 	switch *msgType {
-	case "text", "image", "audio", "post":
+	case "text", "image", "audio":
 		return *msgType, nil
 	default:
 		return "", fmt.Errorf("unknown message type: %v", *msgType)
 	}
+
 }
 
 func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2MessageReceiveV1) error {
@@ -75,8 +77,9 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		handlerType: handlerType,
 		msgType:     msgType,
 		msgId:       msgId,
+		userId:      *event.Event.Sender.SenderId.UserId,
 		chatId:      chatId,
-		qParsed:     strings.Trim(parseContent(*content, msgType), " "),
+		qParsed:     strings.Trim(parseContent(*content), " "),
 		fileKey:     parseFileKey(*content),
 		imageKey:    parseImageKey(*content),
 		sessionId:   sessionId,
@@ -90,18 +93,16 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 	actions := []Action{
 		&ProcessedUniqueAction{}, //避免重复处理
 		&ProcessMentionAction{},  //判断机器人是否应该被调用
-		&AudioAction{},           //语音处理
 		&EmptyAction{},           //空消息处理
 		&ClearAction{},           //清除消息处理
-		&PicAction{},             //图片处理
-		&AIModeAction{},          //模式切换处理
 		&RoleListAction{},        //角色列表处理
 		&HelpAction{},            //帮助处理
-		&BalanceAction{},         //余额处理
 		&RolePlayAction{},        //角色扮演处理
-		&MessageAction{},         //消息处理
-
+		&MessageAction{
+			chatgpt: chatgpt.NewGpt3(&m.config),
+		}, //消息处理
 	}
+
 	chain(data, actions...)
 	return nil
 }

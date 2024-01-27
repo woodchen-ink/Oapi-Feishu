@@ -2,9 +2,8 @@ package openai
 
 import (
 	"fmt"
-	"testing"
-
 	"start-feishubot/initialization"
+	"testing"
 )
 
 func TestCompletions(t *testing.T) {
@@ -17,7 +16,7 @@ func TestCompletions(t *testing.T) {
 
 	gpt := NewChatGPT(*config)
 
-	resp, err := gpt.Completions(msgs, Balance)
+	resp, err := gpt.Completions(msgs)
 	if err != nil {
 		t.Errorf("TestCompletions failed with error: %v", err)
 	}
