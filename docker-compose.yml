@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  oapi-feishu:
+    image: woodchen/oapi-feishu
+    ports:
+      - 1008:8080
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      APP_ID: ${APP_ID}
+      APP_SECRET: ${APP_SECRET}
+      CHATGPT_LANGUAGE: ZH_CN
+      OFFLINE_MESSAGE: GPT已离线
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
