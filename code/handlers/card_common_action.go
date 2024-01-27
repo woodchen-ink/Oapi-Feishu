@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 )
 
@@ -20,8 +21,6 @@ func NewCardHandler(m MessageHandler) CardHandlerFunc {
 		NewPicResolutionHandler,
 		NewPicTextMoreHandler,
 		NewPicModeChangeHandler,
-		NewRoleTagCardHandler,
-		NewRoleCardHandler,
 	}
 
 	return func(ctx context.Context, cardAction *larkcard.CardAction) (interface{}, error) {
