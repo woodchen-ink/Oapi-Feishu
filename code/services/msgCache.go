@@ -1,9 +1,8 @@
 package services
 
 import (
-	"time"
-
 	"github.com/patrickmn/go-cache"
+	"time"
 )
 
 type MsgService struct {

@@ -1,0 +1,42 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+env:
+  IMAGE_NAME: oapi-feishu
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码库
+        uses: actions/checkout@v3
+
+      - name: 构建镜像
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: 登录到镜像仓库
+        run: echo "${{ secrets.ACCESS_TOKEN }}" | docker login -u woodchen --password-stdin
+
+      - name: 推送镜像
+        run: |
+          IMAGE_ID=woodchen/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # 从 GitHub 事件负载中获取分支名
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # 对于除了 "main" 分支和标签以外的分支，使用 "latest" 版本号
+          VERSION=$(if [ "$BRANCH_NAME" == "main" ]; then echo "latest"; else echo $BRANCH_NAME; fi)
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION

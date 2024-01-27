@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"context"
-
-	"start-feishubot/services"
-
 	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
+	"start-feishubot/services"
 )
 
 func NewPicResolutionHandler(cardMsg CardMsg, m MessageHandler) CardHandlerFunc {
@@ -30,7 +28,6 @@ func NewPicModeChangeHandler(cardMsg CardMsg, m MessageHandler) CardHandlerFunc 
 		return nil, ErrNextHandler
 	}
 }
-
 func NewPicTextMoreHandler(cardMsg CardMsg, m MessageHandler) CardHandlerFunc {
 	return func(ctx context.Context, cardAction *larkcard.CardAction) (interface{}, error) {
 		if cardMsg.Kind == PicTextMoreKind {

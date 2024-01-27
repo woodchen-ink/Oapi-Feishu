@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"context"
-
-	"start-feishubot/services"
-
 	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
+	"start-feishubot/services"
 )
 
 func NewClearCardHandler(cardMsg CardMsg, m MessageHandler) CardHandlerFunc {
