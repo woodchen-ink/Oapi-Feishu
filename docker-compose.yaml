@@ -1,12 +1,9 @@
 version: '3.3'
 services:
-  feishu-chatgpt:
-    container_name: Feishu-OpenAI-Stream-Chatbot
-    build:
-      context: .
-      dockerfile: Dockerfile
+  image: woodchen/oapi-feishu
+  oapi-feishu:
     ports:
-      - "9000:9000/tcp"
+      - "1008:9000"
     volumes:
       # - ./code/config.yaml:/app/config.yaml:ro
       # 要注意，这里右边的容器内的路径，不是从根目录开始的，要参考 dockerfile 中的 WORKDIR
@@ -29,14 +26,12 @@ services:
       - USE_HTTPS=false
       - CERT_FILE=cert.pem
       - KEY_FILE=key.pem
-      # OpenAI 地址, 一般不需要修改, 除非你有自己的反向代理
-      - API_URL=https://api.openai.com
-      # 代理设置, 例如 - HTTP_PROXY=http://127.0.0.1:7890, 默认代表不使用代理
-      - HTTP_PROXY
+      # OpenAI 地址, 一般不需要修改
+      - API_URL=https://oapi.czl.net
       ## 访问控制
       # 是否启用访问控制。默认不启用。
       - ACCESS_CONTROL_ENABLE=false
       # 每个用户每天最多问多少个问题。默认为0. 配置成为小于等于0表示不限制。
       - ACCESS_CONTROL_MAX_COUNT_PER_USER_PER_DAY=0
       # 访问OpenAi的 普通 Http请求的超时时间，单位秒，不配置的话默认为 550 秒
-      - OPENAI_HTTP_CLIENT_TIMEOUT
+      - OPENAI_HTTP_CLIENT_TIMEOUT=600

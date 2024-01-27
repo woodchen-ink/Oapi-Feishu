@@ -1,46 +1,20 @@
-# Builder
-FROM --platform=$BUILDPLATFORM whatwewant/builder-go:v1.20-1 as builder
+FROM golang:1.18 as golang
+
+ENV GO111MODULE=on \
+    CGO_ENABLED=1 \
+    GOPROXY=https://goproxy.cn,direct
 
 WORKDIR /build
+ADD /code /build
 
-COPY go.mod ./
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags '-w -s' -o feishu_chatgpt
 
-COPY go.sum ./
+FROM alpine:latest
 
-RUN go mod download
+WORKDIR /app
 
-COPY . .
-
-ARG TARGETARCH
-
-RUN CGO_ENABLED=0 \
-  GOOS=linux \
-  GOARCH=$TARGETARCH \
-  go build \
-  -trimpath \
-  -ldflags '-w -s -buildid=' \
-  -v -o chatgpt-for-chatbot-feishu
-
-# Server
-FROM whatwewant/go:v1.20-1
-# FROM whatwewant/zmicro:v1
-
-LABEL MAINTAINER="Zero<tobewhatwewant@gmail.com>"
-
-LABEL org.opencontainers.image.source="https://github.com/go-zoox/chatgpt-for-chatbot-feishu"
-
-ARG VERSION=latest
-
-ENV MODE=production
-
-COPY --from=builder /build/chatgpt-for-chatbot-feishu /bin
-
-ENV VERSION=${VERSION}
-
-RUN zmicro package install ngrok
-
-# RUN zmicro package install cpolar
-
-COPY ./entrypoint.sh /
-
-CMD /entrypoint.sh
+RUN apk add --no-cache bash
+COPY --from=golang /build/feishu_chatgpt /app
+COPY --from=golang /build/role_list.yaml /app
+EXPOSE 9000
+ENTRYPOINT ["/app/feishu_chatgpt"]
