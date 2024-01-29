@@ -1,4 +1,4 @@
-Telegram交流群：https://t.me/ai_cn2023
+点击链接加入QQ频道【wood的创作者频道】：https://pd.qq.com/s/7omwt27ng
 
 --- 
 
