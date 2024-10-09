@@ -1,0 +1,18 @@
+FROM --platform=$TARGETPLATFORM alpine:latest
+
+WORKDIR /app
+
+RUN apk add --no-cache bash
+
+COPY feishu_chatgpt-* /app/
+COPY code/role_list.yaml /app/
+
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+      mv /app/feishu_chatgpt-amd64 /app/feishu_chatgpt; \
+    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+      mv /app/feishu_chatgpt-arm64 /app/feishu_chatgpt; \
+    fi && \
+    chmod +x /app/feishu_chatgpt
+
+EXPOSE 9000
+ENTRYPOINT ["/app/feishu_chatgpt"]
