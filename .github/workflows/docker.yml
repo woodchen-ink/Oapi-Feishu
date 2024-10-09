@@ -33,6 +33,20 @@ jobs:
           cd code
           CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags '-w -s' -o ../feishu_chatgpt-arm64
 
+      - name: List files
+        run: ls -l
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.multi
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            woodchen/${{ env.IMAGE_NAME }}:latest
+            woodchen/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 

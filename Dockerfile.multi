@@ -7,12 +7,16 @@ RUN apk add --no-cache bash
 COPY feishu_chatgpt-* /app/
 COPY code/role_list.yaml /app/
 
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-      mv /app/feishu_chatgpt-amd64 /app/feishu_chatgpt; \
+RUN ls -l /app && \
+    if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+      mv /app/feishu_chatgpt-amd64 /app/feishu_chatgpt || echo "amd64 binary not found"; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-      mv /app/feishu_chatgpt-arm64 /app/feishu_chatgpt; \
+      mv /app/feishu_chatgpt-arm64 /app/feishu_chatgpt || echo "arm64 binary not found"; \
+    else \
+      echo "Unknown platform: $TARGETPLATFORM"; \
     fi && \
-    chmod +x /app/feishu_chatgpt
+    ls -l /app && \
+    chmod +x /app/feishu_chatgpt || echo "Failed to set executable permission"
 
 EXPOSE 9000
 ENTRYPOINT ["/app/feishu_chatgpt"]
