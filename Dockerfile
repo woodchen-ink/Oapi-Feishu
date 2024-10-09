@@ -1,8 +1,7 @@
-FROM golang:1.18 as golang
+FROM golang:1.23 as golang
 
 ENV GO111MODULE=on \
-    CGO_ENABLED=1 \
-    GOPROXY=https://goproxy.cn,direct
+    CGO_ENABLED=1 
 
 WORKDIR /build
 ADD /code /build

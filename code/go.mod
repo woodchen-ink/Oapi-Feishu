@@ -1,6 +1,6 @@
 module start-feishubot
 
-go 1.18
+go 1.23
 
 require github.com/larksuite/oapi-sdk-go/v3 v3.0.14
 
