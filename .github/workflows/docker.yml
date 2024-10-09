@@ -65,4 +65,5 @@ jobs:
           username: woodchen
           password: ${{ secrets.ACCESS_TOKEN }}
           repository: woodchen/${{ env.IMAGE_NAME }}
+          readme-filepath: ./README.md  # 指定 README.md 的路径
           short-description: ${{ github.event.repository.description }}
