@@ -27,6 +27,19 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
+    - name: Initialize Go module if needed
+      working-directory: ./code
+      run: |
+        if [ ! -f go.mod ]; then
+          go mod init github.com/${{ github.repository }}
+          go mod tidy
+        fi
+
+    - name: Build Go binary
+      working-directory: ./code
+      run: |
+        CGO_ENABLED=0 GOOS=linux GOARCH=${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }} go build -ldflags '-w -s' -o ../feishu_chatgpt
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
 
@@ -38,10 +51,6 @@ jobs:
       with:
         username: woodchen
         password: ${{ secrets.ACCESS_TOKEN }}
-
-    - name: Build Go binary
-      run: |
-        CGO_ENABLED=0 GOOS=linux GOARCH=${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }} go build -ldflags '-w -s' -o feishu_chatgpt
 
     - name: Prepare Docker metadata
       id: meta
@@ -62,4 +71,3 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-
