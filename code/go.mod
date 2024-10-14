@@ -5,7 +5,7 @@ go 1.23
 require github.com/larksuite/oapi-sdk-go/v3 v3.3.4
 
 require (
-	github.com/duke-git/lancet/v2 v2.3.2
+	github.com/duke-git/lancet/v2 v2.3.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/k0kubun/pp/v3 v3.2.0
