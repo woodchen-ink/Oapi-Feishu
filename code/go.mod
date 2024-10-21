@@ -2,7 +2,7 @@ module start-feishubot
 
 go 1.23
 
-require github.com/larksuite/oapi-sdk-go/v3 v3.3.4
+require github.com/larksuite/oapi-sdk-go/v3 v3.3.5
 
 require (
 	github.com/duke-git/lancet/v2 v2.3.3
