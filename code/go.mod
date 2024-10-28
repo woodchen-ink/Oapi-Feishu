@@ -8,7 +8,7 @@ require (
 	github.com/duke-git/lancet/v2 v2.3.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
-	github.com/k0kubun/pp/v3 v3.2.0
+	github.com/k0kubun/pp/v3 v3.3.0
 	github.com/larksuite/oapi-sdk-gin v1.0.0
 	github.com/pandodao/tokenizer-go v0.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
